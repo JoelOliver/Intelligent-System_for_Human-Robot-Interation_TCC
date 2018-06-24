@@ -6,7 +6,7 @@ O projeto pôde ser validado, utilizando o robô Pioneer3-DX, por meio de duas f
 
 - Utilizando o robô virtualmente, por meio da plataforma de simulação V-REP (Virtual Robot Experimentation Plataform - link: http://www.coppeliarobotics.com/), da Coppelia Robotics, utilizando a API para Python disponibilizada pelos próprios fabricantes.
 
-- Utilizando o robô físico, por meio da comunicação com o ROS presente no próprio robô, utilizando a API para Python disponibilizada pelos próprios fabricantes
+- Utilizando o robô físico, por meio da comunicação com o ROS (Robot Operational System - link:http://www.ros.org/) presente no próprio robô, utilizando a API para Python disponibilizada pelos próprios fabricantes
 
 # An Intelligent System for Human-Robot Interation
 ## Abstract
@@ -16,4 +16,4 @@ The project could be validated using the Pioneer3-DX robot in two ways:
 
 - Using the robot virtually, through Coppelia Robotics' Virtual Robot Experimentation Platform (link: http://www.coppeliarobotics.com/) using the Python API provided by the manufacturers themselves.
 
-- Using the physical robot, through the communication with the ROS present in the robot itself, using the API for Python made available by the manufacturers themselves
+- Using the physical robot, through the communication with the ROS (Robot Operational System - link:http://www.ros.org/) present in the robot itself, using the API for Python made available by the manufacturers themselves
