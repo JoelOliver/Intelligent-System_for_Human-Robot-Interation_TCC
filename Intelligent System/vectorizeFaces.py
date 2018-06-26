@@ -2,7 +2,6 @@ import numpy as np
 import cv2
 from sklearn.model_selection import train_test_split
 import pandas as pd
-from detectFaces import detect_faces
 import imutils
 import dlib
 from imutils import face_utils

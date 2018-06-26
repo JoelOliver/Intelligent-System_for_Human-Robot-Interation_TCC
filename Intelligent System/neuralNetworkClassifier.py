@@ -4,8 +4,8 @@ from saveReturnValuesCSV import return_of_images_and_rotules_vectors,return_of_i
 import numpy as np
 from sklearn.preprocessing import normalize
 from imageCapture import sample_capture_to_rank
-import subprocess
 from sklearn.neural_network import MLPClassifier
+import pandas as pd
 
 #inicializations
 dataset_faces = return_of_images_aligned_and_rotules_vectors()
@@ -30,20 +30,25 @@ def mpl_training():
 	predictions = mlp.predict(X_test)
 
 	from sklearn.metrics import classification_report,confusion_matrix
+	print("\n>> Informações Gerais <<\n")
 	print(classification_report(y_test,predictions))
+	print("\n>> Matriz de Confusão <<\n")
+	print(pd.crosstab(y_test, mlp.predict(X_test),rownames=['Real'],colnames=['Predito'],margins=True))
+	print("\n>> Média de acertos de precisões <<")
 	print(np.mean(y_test==predictions))
 	
 def mlp_rank_a_sample(voice=False):
 	
 	#take a picture for classification
-	sample_capture_to_rank()
+	#sample_capture_to_rank()
 	
 	#read the image that had captured
 	img = load_picture_captured()
 	img = img.reshape(1,-1) # for convert in a single sample.
 	
-	# Normalizar imagem capturada e o dataset
-	#img = normalize(img)
+	# Padronizar imagem capturada 
+	scaler.fit(img)
+	img = scaler.transform(img)
 
 	#Aplicar PCA - Testando ...
 	#img = pca.fit_transform(img)
@@ -51,7 +56,6 @@ def mlp_rank_a_sample(voice=False):
 	mlp.fit(X,y)
 	predict = mlp.predict(img)
 	
-	if voice:
-		subprocess.call(["say","Olá {}, espero ter acertado.".format(return_subject_name(predict)[0])])
+	
 	print("\nO Sistema prediz que você é : {}-{}\n".format(predict,return_subject_name(predict)))
 	

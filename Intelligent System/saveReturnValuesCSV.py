@@ -23,7 +23,7 @@ def return_of_images_and_rotules_vectors():
     return [X,y]
 
 def return_of_images_aligned_and_rotules_vectors():
-    X = pd.read_csv('X_aligned.csv').values.tolist()
+    X = pd.read_csv('X.csv').values.tolist()
     #y = pd.read_csv('y.csv').values.tolist()
     y = np.asarray(pd.read_csv('y.csv').values.tolist()).transpose()[0] #vetorizando a lista y
 

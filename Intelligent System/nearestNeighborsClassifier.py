@@ -5,8 +5,8 @@ from vectorizeFaces import vectorize_data_faces,load_picture_captured
 from saveReturnValuesCSV import return_of_images_and_rotules_vectors,return_of_images_aligned_and_rotules_vectors,return_subject_name
 import numpy as np
 from sklearn.preprocessing import normalize
-from imageCapture import sample_capture_to_rank#,sample_capture_aligned_to_rank
-import subprocess
+from imageCapture import sample_capture_to_rank
+import pandas as pd
 
 #inicializations
 dataset_faces = return_of_images_aligned_and_rotules_vectors()
@@ -16,7 +16,7 @@ X, y = [dataset_faces[0],dataset_faces[1]]
 #print(len(X[0]))
 
 #Normalization of X Matrix of image_vectors
-#X = normalize(X)
+X = normalize(X)
 
 from sklearn.preprocessing import StandardScaler
 #scaler = StandardScaler()
@@ -46,8 +46,11 @@ def knearest_neighborhood_training():
 	predictions = neighKNeigh.predict(X_test)
 
 	from sklearn.metrics import classification_report,confusion_matrix
+	print("\n>> Informações Gerais <<\n")
 	print(classification_report(y_test,predictions))
-	
+	print("\n>> Matriz de Confusão <<\n")
+	print(pd.crosstab(y_test, neighKNeigh.predict(X_test),rownames=['Real'],colnames=['Predito'],margins=True))
+	print("\n>> Média de acertos de precisões <<")
 	print(np.mean(y_test==predictions))
 
 #Testar função -> nearest_knearest_neighborhood_training() 
@@ -62,8 +65,11 @@ def centroid_training():
 	predictions = neighCentroid.predict(X_test)
 
 	from sklearn.metrics import classification_report,confusion_matrix
+	print("\n>> Informações Gerais <<\n")
 	print(classification_report(y_test,predictions))
-	
+	print("\n>> Matriz de Confusão <<\n")
+	print(pd.crosstab(y_test, neighCentroid.predict(X_test),rownames=['Real'],colnames=['Predito'],margins=True))
+	print("\n>> Média de acertos de precisões <<")
 	print(np.mean(y_test==predictions))
 
 #Testar função -> nearest_centroid_training()
@@ -84,8 +90,7 @@ def knearest_rank_a_sample(voice=False):
 	neighKNeigh.fit(X,y)
 	predict = neighKNeigh.predict(img)
 	
-	if voice:
-		subprocess.call(["say","Olá {}, espero ter acertado.".format(return_subject_name(predict))])
+	
 	print("\nO Sistema prediz que você é : {}-{}\n".format(predict,return_subject_name(predict)))
 
 #Testar função -> knearest_rank_a_sample()
@@ -95,14 +100,13 @@ def nearest_centroid_rank_a_sample(voice=False):
 	
 	#take a picture for classification
 	sample_capture_to_rank()
-	#sample_capture_aligned_to_rank()
 	
 	#read the image that had captured
 	img = load_picture_captured()
 	img = img.reshape(1,-1) # for convert in a single sample.
 	
 	# Normalizar imagem capturada e o dataset
-	#img = normalize(img)
+	img = normalize(img)
 
 	#Aplicar PCA - Testando ...
 	#img = pca.fit_transform(img)
@@ -110,8 +114,6 @@ def nearest_centroid_rank_a_sample(voice=False):
 	neighCentroid.fit(X,y)
 	predict = neighCentroid.predict(img)
 	
-	if voice:
-		subprocess.call(["say","Olá {}, espero ter acertado.".format(return_subject_name(predict)[0])])
 	print("\nO Sistema prediz que você é : {}-{}\n".format(predict,return_subject_name(predict)))
 
 #Testar função -> nearest_centroid_rank_a_sample()
