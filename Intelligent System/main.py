@@ -1,37 +1,37 @@
-import time
-
 '''
-## Para verificar o tempo de execução de qualquer função
-inicio = time.time()
-print(inicio)
-
-some_function() #substituir aqui pela função verdadeira
-
-fim = time.time()
-print(fim)
-
-print(fim - inicio)
+"Main" para testes do sitema inteligente em reconhecimento facial e gestual
 '''
 
-#from nearestNeighborsClassifier import knearest_neighborhood_training,centroid_training
-#from neuralNetworkClassifier import mpl_training
+#from saveReturnValuesCSV import return_of_images_and_rotules_vectors,return_of_images_hands_and_rotules_vectors,return_subject_name
+#dataset_faces = return_of_images_hands_and_rotules_vectors()
+#X, y = [dataset_faces[0],dataset_faces[1]]
+
+#print(len(X[1]))
+
+from nearestNeighborsClassifier import knearest_neighborhood_training
+from nearestNeighborsClassifier import centroid_training
+from neuralNetworkClassifier import mpl_training
 #Verificar taxas de acertos, treinamento e teste dos algorítmos
-#knearest_neighborhood_training()
-#centroid_training()
-#mpl_training()
+knearest_neighborhood_training()
+centroid_training()
+mpl_training()
 
 
-#from nearestNeighborsClassifier import knearest_rank_a_sample,nearest_centroid_rank_a_sample
-from neuralNetworkClassifier import mlp_rank_a_sample
+#from nearestNeighborsClassifier import knearest_rank_a_sample
+#from nearestNeighborsClassifier import nearest_centroid_rank_a_sample
+#from neuralNetworkClassifier import mlp_rank_a_sample
 
 # Classificar uma amostra utilizando o classificador vizinho mais próximo
+#print("usando KNN")
 #knearest_rank_a_sample()
 
 # Classificar uma amostra utilizando o classificador centroid mais próximo
+#print("usando KNC")
 #nearest_centroid_rank_a_sample()
 
 # Classificar uma amostra utilizando o classificador neural MLP
-mlp_rank_a_sample()
+#print("usando MLP")
+#mlp_rank_a_sample()
 
 
 #from imageCapture import sample_capture_to_rank,samples_capture_to_dataBase

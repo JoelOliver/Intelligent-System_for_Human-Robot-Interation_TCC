@@ -1,63 +1,46 @@
-import numpy as np
 import cv2
-from saveReturnValuesCSV import save_vectorized_load_faces_in_csv_file,return_last_index_subject
-import subprocess
-from vectorizeFaces import vectorize_data_faces_cutting,vectorize_data_faces
-from detectAndAlignFaces import align_rank_sample
-import imutils
-import dlib
-from imutils import face_utils
-from imutils.face_utils import FaceAligner
-from imutils.face_utils import rect_to_bb
+import numpy as np
+import copy
+import math
 
-#inicializations
-haar_face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_alt.xml')
+#Parameters
+global cap_region_x_begin, cap_region_y_end, threshold, blurValue, bgSubThreshold, learningRate
+cap_region_x_begin=0.5  # start point/total width
+cap_region_y_end=0.8  # start point/total width
+threshold = 60  #  BINARY threshold
+blurValue = 41  # GaussianBlur parameter
+bgSubThreshold = 50
+learningRate = 0
 
-# Função para capturar apenas uma imagem, para que o programa a classifique
-def sample_capture_to_rank():
-	#subprocess.call(["say","Para reconhecer você, será necessário que você se posicione em frente a camêra"])
-	#subprocess.call(["say","Uma janela será aberta, e, quando estiver preparado aperte a tecla espaço para continuar!"])
+#Variables
+global isBgCaptured, triggerSwitch
+isBgCaptured = 0   # bool, whether the background captured
+triggerSwitch = False  # if true, keyborad simulator works
 
-	cam=cv2.VideoCapture(0)
-	cv2.namedWindow("image_capture",cv2.WINDOW_NORMAL)
-	cv2.resizeWindow('image_capture', 600,600)
+# Instanciantions
+global bgModel
+bgModel = cv2.createBackgroundSubtractorMOG2(0, bgSubThreshold)
 
-	print(">>> Pressione a tecla SPACE para capturar a imagem ou ESC para sair <<<\n")
-	while True:
-		ret, frame = cam.read()
-		
-		img_copy = frame.copy()
+def removeBG(frame):
+    fgmask = bgModel.apply(frame,learningRate=learningRate)
+    #kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+    #res = cv2.morphologyEx(fgmask, cv2.MORPH_OPEN, kernel)
 
-		#gray = cv2.cvtColor(img_copy, cv2.COLOR_BGR2GRAY)
+    kernel = np.ones((3, 3), np.uint8)
+    fgmask = cv2.erode(fgmask, kernel, iterations=3)
+    res = cv2.bitwise_and(frame, frame, mask=fgmask)
+    return res
 
-		faces = haar_face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5);          
+img = removeBG(cv2.imread('test.png'))
+#cv2.imshow('teste img', cv2.imread('test.png'))
+   
+# convert the image into binary image
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+blur = cv2.GaussianBlur(gray, (blurValue, blurValue), 0)
+#cv2.imshow('blur', blur)
+ret, thresh = cv2.threshold(blur, threshold, 255, cv2.THRESH_BINARY)
+cv2.imwrite('test_binarizeds.png',thresh.copy())
 
-		#Draw a rectangle around the faces
-		for (x, y, w, h) in faces:
-		    cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
 
-		cv2.imshow('image_capture', frame)
-		
-		if not ret:
-			break
-		k = cv2.waitKey(1)
 
-		if k%256 == 27:
-			#ESC pressed
-			print("ESC apertado, fechando a janela ...")
-			break
-		elif k%256 == 32:
-			#SPACE pressed
-			img_name = 'sample_to_rank.png'
-			try:
-				cv2.imwrite(img_name,cv2.cvtColor(align_a_sample(img_copy), cv2.COLOR_BGR2GRAY))
-				print('Captura realizada com sucesso !\n')
-				break 
-			except:
-				print('A captura não foi possível, por favor se posicionar adequadamente em frente a câmera e apertar a tecla ESPAÇO quando estiver preparado ...\n')
 
-	cam.release()
-
-	cv2.destroyAllWindows()
-
-#sample_capture_to_rank()

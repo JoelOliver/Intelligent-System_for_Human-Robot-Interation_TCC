@@ -2,21 +2,27 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neighbors.nearest_centroid import NearestCentroid
 from sklearn.model_selection import train_test_split
 from vectorizeFaces import vectorize_data_faces,load_picture_captured
-from saveReturnValuesCSV import return_of_images_and_rotules_vectors,return_of_images_aligned_and_rotules_vectors,return_subject_name
+from saveReturnValuesCSV import return_of_images_and_rotules_vectors,return_of_images_hands_and_rotules_vectors,return_subject_name
 import numpy as np
 from sklearn.preprocessing import normalize
-from imageCapture import sample_capture_to_rank
+from sklearn.model_selection import cross_val_score
+from facesCapture import sample_capture_to_rank
+from handsCapture import sample_hand_capture_to_rank
 import pandas as pd
+from vectorizeHands import load_hand_picture_captured
 
-#inicializations
-dataset_faces = return_of_images_aligned_and_rotules_vectors()
+
+#inicializations for image faces
 dataset_faces = return_of_images_and_rotules_vectors()
 X, y = [dataset_faces[0],dataset_faces[1]]
 
-#print(len(X[0]))
+#inicializations for image hands
+dataset_faces = return_of_images_hands_and_rotules_vectors()
+X_hand, y_hand = [dataset_faces[0],dataset_faces[1]]
+
 
 #Normalization of X Matrix of image_vectors
-X = normalize(X)
+#X = normalize(X)
 
 from sklearn.preprocessing import StandardScaler
 #scaler = StandardScaler()
@@ -50,8 +56,9 @@ def knearest_neighborhood_training():
 	print(classification_report(y_test,predictions))
 	print("\n>> Matriz de Confusão <<\n")
 	print(pd.crosstab(y_test, neighKNeigh.predict(X_test),rownames=['Real'],colnames=['Predito'],margins=True))
-	print("\n>> Média de acertos de precisões <<")
+	print("\n>> Média de acertos de precisões <<\n")
 	print(np.mean(y_test==predictions))
+
 
 #Testar função -> nearest_knearest_neighborhood_training() 
 #knearest_neighborhood_training() 
@@ -69,52 +76,94 @@ def centroid_training():
 	print(classification_report(y_test,predictions))
 	print("\n>> Matriz de Confusão <<\n")
 	print(pd.crosstab(y_test, neighCentroid.predict(X_test),rownames=['Real'],colnames=['Predito'],margins=True))
-	print("\n>> Média de acertos de precisões <<")
+	print("\n>> Média de acertos de precisões <<\n")
 	print(np.mean(y_test==predictions))
 
-#Testar função -> nearest_centroid_training()
-#centroid_training()
 
-def knearest_rank_a_sample(voice=False):
+def knearest_rank_a_hand_sample():
 
 	#take a picture for classification
+
+	sample_hand_capture_to_rank()
+
+		
+	#read the image that had captured
+	img = load_hand_picture_captured()
+	img = img.reshape(1,-1) # for convert in a single sample.
+	
+	# Normalizar imagem capturada e o dataset
+	#img = normalize(img)
+	
+	neighKNeigh.fit(X_hand,y_hand)
+	predict = neighKNeigh.predict(img)
+	
+
+	return predict[0]
+
+def nearest_centroid_rank_a_hand_sample():
+
+	#take a picture for classification
+
+	sample_hand_capture_to_rank()
+
+		
+	#read the image that had captured
+	img = load_hand_picture_captured()
+	img = img.reshape(1,-1) # for convert in a single sample.
+	
+	# Normalizar imagem capturada e o dataset
+	#img = normalize(img)
+	
+	neighCentroid.fit(X_hand,y_hand)
+	predict = neighKNeigh.predict(img)
+	
+
+	return predict[0]
+
+def knearest_rank_a_sample():
+	
+	#take a picture for classification
+
 	sample_capture_to_rank()
+
 	
 	#read the image that had captured
 	img = load_picture_captured()
 	img = img.reshape(1,-1) # for convert in a single sample.
 	
 	# Normalizar imagem capturada e o dataset
-	img = normalize(img)
+	#img = normalize(img)
+
+	#Aplicar PCA - Testando ...
+	#img = pca.fit_transform(img)
 
 	neighKNeigh.fit(X,y)
 	predict = neighKNeigh.predict(img)
-	
-	
+
+
 	print("\nO Sistema prediz que você é : {}-{}\n".format(predict,return_subject_name(predict)))
+	return [predict[0], return_subject_name(predict)]
 
-#Testar função -> knearest_rank_a_sample()
-#knearest_rank_a_sample()
-
-def nearest_centroid_rank_a_sample(voice=False):
+def nearest_centroid_rank_a_sample():
 	
 	#take a picture for classification
+
 	sample_capture_to_rank()
+
 	
 	#read the image that had captured
 	img = load_picture_captured()
 	img = img.reshape(1,-1) # for convert in a single sample.
 	
 	# Normalizar imagem capturada e o dataset
-	img = normalize(img)
+	#img = normalize(img)
 
 	#Aplicar PCA - Testando ...
 	#img = pca.fit_transform(img)
 
 	neighCentroid.fit(X,y)
 	predict = neighCentroid.predict(img)
-	
-	print("\nO Sistema prediz que você é : {}-{}\n".format(predict,return_subject_name(predict)))
 
-#Testar função -> nearest_centroid_rank_a_sample()
-#nearest_centroid_rank_a_sample()
+
+	print("\nO Sistema prediz que você é : {}-{}\n".format(predict,return_subject_name(predict)))
+	return [predict[0], return_subject_name(predict)]

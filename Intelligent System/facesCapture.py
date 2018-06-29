@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 from saveReturnValuesCSV import save_vectorized_load_faces_in_csv_file,return_last_index_subject
-from vectorizeFaces import vectorize_data_faces_cutting,vectorize_data_faces
+from vectorizeFaces import vectorize_data_faces
 from detectAndAlignFaces import align_a_sample
 import dlib
 from imutils.face_utils import rect_to_bb
@@ -19,6 +19,7 @@ def sample_capture_to_rank():
 	print(">>> Pressione a tecla SPACE para capturar a imagem ou ESC para sair <<<\n")
 	while True:
 		ret, frame = cam.read()
+		frame = cv2.flip(frame, 1)  # flip the frame horizontally
 		
 		img_copy = frame.copy()
 

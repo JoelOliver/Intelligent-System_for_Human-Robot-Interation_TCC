@@ -65,7 +65,7 @@ def align_a_sample(img):
     predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
     fa = FaceAligner(predictor, desiredFaceWidth=256)
 
-    img = imutils.resize(img, width=800)
+    #img = imutils.resize(img, width=800)
     
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     
